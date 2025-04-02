@@ -5,7 +5,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import ru.kata.spring.boot_security.demo.service.UserService;
+import ru.kata.spring.boot_security.demo.models.User;
+import ru.kata.spring.boot_security.demo.services.UserServiceImp;
 
 import java.security.Principal;
 
@@ -13,16 +14,17 @@ import java.security.Principal;
 @RequestMapping("/user")
 public class UserController {
 
-    private UserService userService;
+    private final UserServiceImp userService;
 
     @Autowired
-    public void setUserService(UserService userService) {
+    public UserController(UserServiceImp userService) {
         this.userService = userService;
     }
 
     @GetMapping
-    public String userProfile(Principal principal, Model model) {
-        model.addAttribute("user", userService.findByUsername(principal.getName()));
-        return "user/user";
+    public String getUserPage(Principal principal, Model model) {
+        User user = userService.findByUsername(principal.getName());  // Получаем пользователя по имени (идентификатору)
+        model.addAttribute("user", user);
+        return "user/user";  // Страница с информацией о пользователе
     }
 }
